@@ -54,7 +54,9 @@ func newGrokFilter(options utils.InterfaceMap) (filters.Filter, error) {
 }
 
 func (f *GrokFilter) setConfig(options utils.InterfaceMap) error {
-	if err := config.VerifySettings(options, grokConfigSchema); err != nil {
+	var err error
+	options, err = config.VerifySettings(options, grokConfigSchema)
+	if err != nil {
 		return err
 	}
 
@@ -63,7 +65,6 @@ func (f *GrokFilter) setConfig(options utils.InterfaceMap) error {
 
 	patterns := options.Get("patterns").([]string)
 	f.config.regex = make([]*regexp.Regexp, len(patterns))
-	var err error
 	for i, pattern := range patterns {
 		f.config.regex[i], err = regexp.Compile(interpolatePatterns(pattern))
 		if err != nil {
