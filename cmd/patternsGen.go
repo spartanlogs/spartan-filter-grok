@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -104,7 +105,9 @@ func processfile(path string) error {
 		}
 
 		if patternNames[patternName] {
-			return fmt.Errorf("Pattern %s already defined. File %s, line %d", patternName, path, lineNum)
+			fmt.Printf("Pattern %s already defined. File %s, line %d\n", patternName, path, lineNum)
+			lineNum++
+			continue
 		}
 
 		patternRegex := strings.TrimSpace(parts[1])
@@ -125,13 +128,13 @@ func writeOutput(outFile *os.File) error {
 // To change a pattern, edit the correct file under patterns and run
 // "make generate" from the project root
 
-package filters
+package grok
 
 var grokPatterns = map[string]string{
 `)
 
 	for _, pattern := range patterns {
-		fmt.Fprintf(outFile, "	\"%s\": `%s`,\n", pattern.name, pattern.regex)
+		fmt.Fprintf(outFile, "	\"%s\": %s,\n", pattern.name, strconv.Quote(pattern.regex))
 	}
 
 	fmt.Fprint(outFile, "}\n")

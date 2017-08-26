@@ -30,7 +30,7 @@ func interpolatePatterns(s string) string {
 	for _, match := range matches {
 		var r string
 		if match[2] != "" {
-			r = fmt.Sprintf(`(?P<%s>%s)`, match[2], grokPatterns[match[1]])
+			r = fmt.Sprintf(`(?P<%s>%s)`, strings.Replace(match[2], "-", "_", -1), grokPatterns[match[1]])
 		} else {
 			r = grokPatterns[match[1]]
 		}
